@@ -2,6 +2,7 @@
 using Bloggie.Models.Domain;
 using Bloggie.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Cryptography;
 
 namespace Bloggie.Controllers
 {
@@ -87,6 +88,23 @@ namespace Bloggie.Controllers
             }
             // show error notification
             return RedirectToAction("Edit" , new { id = editTagRequest.Id });
+        }
+
+        [HttpPost]
+        public IActionResult Delete(EditTagRequest editTagRequest)
+        {
+            var tag = bloggieDbContext.Tags.Find(editTagRequest.Id);
+
+            if (tag != null)
+            {
+                bloggieDbContext.Remove(tag);
+                bloggieDbContext.SaveChanges();
+
+                //show success notification 
+                return RedirectToAction("List");
+            }
+            // show error notifications
+            return RedirectToAction("Edit", new { id=editTagRequest.Id});
         }
     }
 }
