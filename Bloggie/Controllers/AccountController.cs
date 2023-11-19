@@ -1,4 +1,5 @@
 ﻿using Bloggie.Models.ViewModels;
+using Bloggie.Models.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -107,4 +108,3 @@ namespace Bloggie.Controllers
         }
     }
 }
-
