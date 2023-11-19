@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Bloggie.Repositories;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
@@ -8,6 +9,12 @@ namespace Bloggie.Controllers
     [ApiController]
     public class ImagesController : ControllerBase
     {
+        private readonly IImageRepository imageRespository;
+
+        public ImagesController(IImageRepository imageRespository)
+        {
+            this.imageRespository = imageRespository;
+        }
         [HttpPost]
         public async Task<IActionResult> UploadAsync(IFormFile file)
         {
