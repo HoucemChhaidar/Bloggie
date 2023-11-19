@@ -1,4 +1,5 @@
 ﻿@model List<Bloggie.Models.Domain.Tag>
+
 @{
 }
 
@@ -7,7 +8,6 @@
         <h1>Show All Tags - Admin Functionality</h1>
     </div>
 </div>
-
 
 <div class="container py-5">
     @if (Model != null && Model.Any())
@@ -18,7 +18,7 @@
                     <th>Id</th>
                     <th>Name</th>
                     <th>Display Name</th>
-                    <th></th>
+                    <th> </th>
                 </tr>
             </thead>
             <tbody>
@@ -28,7 +28,11 @@
                         <td>@tag.Id</td>
                         <td>@tag.Name</td>
                         <td>@tag.DisplayName</td>
-                        <td><a asp-area="" asp-controller="AdminTags" asp-action="Edit" asp-route-id="@tag.Id">Edit</a></td>
+                        <td>
+                            <a asp-area="" asp-controller="AdminTags"
+                               asp-action="Edit"
+                               asp-route-id="@tag.Id">Edit</a>
+                        </td>
                     </tr>
                 }
             </tbody>
@@ -36,6 +40,6 @@
     }
     else
     {
-        <p>No Tags Found!</p>
+        <p>No tags found!</p>
     }
 </div>
