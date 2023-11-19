@@ -1,5 +1,5 @@
-﻿using Bloggie.Models.ViewModels;
-using Bloggie.Models;
+﻿using Bloggie.Models;
+using Bloggie.Models.ViewModels;
 using Bloggie.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;

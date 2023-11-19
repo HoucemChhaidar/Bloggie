@@ -54,7 +54,7 @@ namespace Bloggie.Repositories
             {
                 bloggieDbContext.Tags.Remove(existingTag);
                 await bloggieDbContext.SaveChangesAsync();
-                
+
                 return existingTag;
             }
             return null;

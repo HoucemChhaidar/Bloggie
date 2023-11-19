@@ -4,6 +4,7 @@ using Bloggie.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Bloggie.Migrations
 {
     [DbContext(typeof(BloggieDbContext))]
-    partial class BloggieDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231119102215_Adding Like Functionality")]
+    partial class AddingLikeFunctionality
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -80,30 +83,6 @@ namespace Bloggie.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("BlogPosts");
-                });
-
-            modelBuilder.Entity("Bloggie.Models.Domain.BlogPostComment", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("BlogPostId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("DateAdded")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("BlogPostComment");
                 });
 
             modelBuilder.Entity("Bloggie.Models.Domain.BlogPostLike", b =>

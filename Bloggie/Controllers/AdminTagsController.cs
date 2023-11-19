@@ -120,7 +120,6 @@ namespace Bloggie.Controllers
             // Show an error notification
             return RedirectToAction("Edit", new { id = editTagRequest.Id });
         }
-
         
         private void ValidateAddTagRequest(AddTagRequest request)
         {
