@@ -1,59 +1,61 @@
 ﻿using Bloggie.Data;
 using Bloggie.Models.Domain;
 using Bloggie.Models.ViewModels;
+using Bloggie.Repositories;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Cryptography;
+using Microsoft.EntityFrameworkCore;
 
 namespace Bloggie.Controllers
 {
     public class AdminTagsController : Controller
     {
-        private readonly BloggieDbContext bloggieDbContext;
+        private readonly ITagRepository tagRepository;
 
-        public AdminTagsController(BloggieDbContext bloggieDbContext)
+        public AdminTagsController(ITagRepository tagRepository)
         {
-            this.bloggieDbContext = bloggieDbContext;
+            this.tagRepository = tagRepository;
         }
 
         [HttpGet]
         public IActionResult Add()
         {
-
             return View();
         }
 
 
         [HttpPost]
         [ActionName("Add")]
-        public IActionResult Add(AddTagRequest addTagRequest)
+        public async Task<IActionResult> Add(AddTagRequest addTagRequest)
         {
-            //Mapping AddTagRequest to Tag domainn model
+            // mapping AddTagRequest to Tag domainn model
             var tag = new Tag
             {
                 Name = addTagRequest.Name,
                 DisplayName = addTagRequest.DisplayName
             };
-            bloggieDbContext.Tags.Add(tag);
-            bloggieDbContext.SaveChanges();
+
+            await tagRepository.AddAsync(tag);
+
             return RedirectToAction("List");
         }
 
         [HttpGet]
         [ActionName("List")]
-        public IActionResult List() {
-
+        public async Task<IActionResult> List()
+        {
             // use DbContext to read Tags from database
-            var tags = bloggieDbContext.Tags.ToList();
+            var tags = await tagRepository.GetAllAsync();
 
             return View(tags);
         }
-        [HttpGet]
-        public IActionResult Edit(Guid id)
-        {
-            //var tag = bloggieDbContext.Tags.Find(id);
-            var tag = bloggieDbContext.Tags.FirstOrDefault(x => x.Id == id);
 
-            if (tag != null) {
+        [HttpGet]
+        public async Task<IActionResult> Edit(Guid id)
+        {
+            var tag = await tagRepository.GetAsync(id);
+
+            if (tag != null)
+            {
                 var editTagRequest = new EditTagRequest
                 {
                     Id = tag.Id,
@@ -67,7 +69,7 @@ namespace Bloggie.Controllers
         }
 
         [HttpPost]
-        public IActionResult Edit (EditTagRequest editTagRequest)
+        public async Task<IActionResult> Edit(EditTagRequest editTagRequest)
         {
             var tag = new Tag
             {
@@ -76,35 +78,34 @@ namespace Bloggie.Controllers
                 DisplayName = editTagRequest.DisplayName
             };
 
-            var existingTag =   bloggieDbContext.Tags.Find(tag.Id);
-            if (existingTag != null)
+            var updatedTag = await tagRepository.UpdateAsync(tag);
+
+            if (updatedTag != null)
             {
-                existingTag.Name = tag.Name;
-                existingTag.DisplayName = tag.DisplayName;
-                // save the changes into the database
-                bloggieDbContext.SaveChanges();
                 // show success notification
-                return RedirectToAction("Edit", new { id = editTagRequest.Id });
             }
+            else
+            {
+                // show error notification
+            }
+
             // show error notification
-            return RedirectToAction("Edit" , new { id = editTagRequest.Id });
+            return RedirectToAction("Edit", new { id = editTagRequest.Id });
         }
 
         [HttpPost]
-        public IActionResult Delete(EditTagRequest editTagRequest)
+        public async Task<IActionResult> Delete(EditTagRequest editTagRequest)
         {
-            var tag = bloggieDbContext.Tags.Find(editTagRequest.Id);
+            var deletedTag = await tagRepository.DeleteAsync(editTagRequest.Id);
 
-            if (tag != null)
+            if (deletedTag != null)
             {
-                bloggieDbContext.Remove(tag);
-                bloggieDbContext.SaveChanges();
-
-                //show success notification 
+                // show success notification
                 return RedirectToAction("List");
             }
+
             // show error notifications
-            return RedirectToAction("Edit", new { id=editTagRequest.Id});
+            return RedirectToAction("Edit", new { id = editTagRequest.Id });
         }
     }
 }
