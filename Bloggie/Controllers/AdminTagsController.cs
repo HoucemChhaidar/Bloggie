@@ -20,7 +20,7 @@ namespace Bloggie.Controllers
         {
             this.tagRepository = tagRepository;
         }
-
+        
         [HttpGet]
         public IActionResult Add()
         {
@@ -29,6 +29,7 @@ namespace Bloggie.Controllers
 
         [HttpPost]
         [ActionName("Add")]
+       
         public async Task<IActionResult> Add(AddTagRequest addTagRequest)
         {
             ValidateAddTagRequest(addTagRequest);
@@ -49,7 +50,7 @@ namespace Bloggie.Controllers
 
             return RedirectToAction("List");
         }
-
+        
         [HttpGet]
         [ActionName("List")]
         public async Task<IActionResult> List()
@@ -59,7 +60,7 @@ namespace Bloggie.Controllers
 
             return View(tags);
         }
-
+       
         [HttpGet]
         public async Task<IActionResult> Edit(Guid id)
         {
@@ -79,7 +80,7 @@ namespace Bloggie.Controllers
 
             return View(null);
         }
-
+        
         [HttpPost]
         public async Task<IActionResult> Edit(EditTagRequest editTagRequest)
         {
@@ -105,6 +106,7 @@ namespace Bloggie.Controllers
         }
 
         [HttpPost]
+        
         public async Task<IActionResult> Delete(EditTagRequest editTagRequest)
         {
             var deletedTag = await tagRepository.DeleteAsync(editTagRequest.Id);
@@ -118,8 +120,7 @@ namespace Bloggie.Controllers
             // Show an error notification
             return RedirectToAction("Edit", new { id = editTagRequest.Id });
         }
-
-
+        
         private void ValidateAddTagRequest(AddTagRequest request)
         {
             if (request.Name is not null && request.DisplayName is not null)
