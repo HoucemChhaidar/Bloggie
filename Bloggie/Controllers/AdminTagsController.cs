@@ -1,12 +1,17 @@
-﻿using Bloggie.Data;
+﻿using Bloggie.Models.Domain;
+using Bloggie.Models.ViewModels;
+using Bloggie.Repositories;
+using Bloggie.Data;
 using Bloggie.Models.Domain;
 using Bloggie.Models.ViewModels;
 using Bloggie.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace Bloggie.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class AdminTagsController : Controller
     {
         private readonly ITagRepository tagRepository;
@@ -22,12 +27,18 @@ namespace Bloggie.Controllers
             return View();
         }
 
-
         [HttpPost]
         [ActionName("Add")]
         public async Task<IActionResult> Add(AddTagRequest addTagRequest)
         {
-            // mapping AddTagRequest to Tag domainn model
+            ValidateAddTagRequest(addTagRequest);
+
+            if (ModelState.IsValid == false)
+            {
+                return View();
+            }
+
+            // Mapping AddTagRequest to Tag domain model
             var tag = new Tag
             {
                 Name = addTagRequest.Name,
@@ -43,7 +54,7 @@ namespace Bloggie.Controllers
         [ActionName("List")]
         public async Task<IActionResult> List()
         {
-            // use DbContext to read Tags from database
+            // use dbContext to read the tags
             var tags = await tagRepository.GetAllAsync();
 
             return View(tags);
@@ -62,6 +73,7 @@ namespace Bloggie.Controllers
                     Name = tag.Name,
                     DisplayName = tag.DisplayName
                 };
+
                 return View(editTagRequest);
             }
 
@@ -82,14 +94,13 @@ namespace Bloggie.Controllers
 
             if (updatedTag != null)
             {
-                // show success notification
+                // Show success notification
             }
             else
             {
-                // show error notification
+                // Show error notification
             }
 
-            // show error notification
             return RedirectToAction("Edit", new { id = editTagRequest.Id });
         }
 
@@ -100,12 +111,24 @@ namespace Bloggie.Controllers
 
             if (deletedTag != null)
             {
-                // show success notification
+                // Show success notification
                 return RedirectToAction("List");
             }
 
-            // show error notifications
+            // Show an error notification
             return RedirectToAction("Edit", new { id = editTagRequest.Id });
+        }
+
+
+        private void ValidateAddTagRequest(AddTagRequest request)
+        {
+            if (request.Name is not null && request.DisplayName is not null)
+            {
+                if (request.Name == request.DisplayName)
+                {
+                    ModelState.AddModelError("DisplayName", "Name cannot be the same as DisplayName");
+                }
+            }
         }
     }
 }
